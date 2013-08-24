@@ -17,7 +17,7 @@ func Test_List_Transform(t *testing.T) {
 	}
 }
 
-func Test_List_Flattern(t *testing.T) {
+func Test_List_Flatten(t *testing.T) {
 	list := List{
 		[]int{},
 		[]int{2, 3, 5, 7},
