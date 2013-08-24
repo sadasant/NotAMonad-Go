@@ -1,13 +1,13 @@
 package monads
 
 import (
-	"testing"
 	"reflect"
+	"testing"
 )
 
 func Test_List_Transform(t *testing.T) {
 	list := List{1, 2, 3}
-	list = list.Transform(func (v Val) Val {
+	list = list.Transform(func(v Val) Val {
 		i := v.(int)
 		return i * i
 	})
