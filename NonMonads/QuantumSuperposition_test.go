@@ -1,10 +1,10 @@
 package nonmonads
 
 import (
+	"math"
 	"reflect"
 	"strconv"
 	"testing"
-	"math"
 )
 
 func Test_QuantumSuperposition_Wrap(t *testing.T) {
@@ -67,7 +67,7 @@ func Test_QuantumSuperposition_Flatten(t *testing.T) {
 	}
 	// Fix rounding.
 	c := s2.Dict["there"].(complex128)
-	i := (math.Floor(imag(c) * 100)/100)+0.01
+	i := (math.Floor(imag(c)*100) / 100) + 0.01
 	s2.Dict["there"] = complex(real(c), i)
 	if reflect.DeepEqual(s2.Dict, expected) != true {
 		t.Errorf("DeepEqual\nexpeted: %s\nreceived:%s", expected, s2.Dict)
