@@ -5,6 +5,11 @@ A go rewrite of the original
 [NotAMonad](https://github.com/Strilanc/NotAMonad) repository made by
 [Strilanc](https://github.com/Strilanc) in C#.
 
+I found this repo originally in this blog post: [What Isn't a
+Monad](http://twistedoakstudios.com/blog/Post5485_what-isnt-a-monad).
+
+This repo, as the original says:
+
 It's a pedagogical repository, containing examples of types that are
 monads (i.e. have wrapping, transforming, flattening methods) and also
 types that aren't (at least, not in a natural or desirable way).
