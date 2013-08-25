@@ -3,6 +3,11 @@ package monads
 type Val interface{}
 type List []Val
 
+// Returns a list containing a single value: the given value.
+func (l *List) Wrap(v Val) List {
+    return append(*l, v)
+}
+
 // Returns a list created by running all of the items in the given list
 // through a transformation function.
 func (l List) Transform(t func(Val) Val) (r List) {

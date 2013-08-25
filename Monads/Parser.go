@@ -4,6 +4,7 @@ package monads
 // any remaining text.
 type Parser func(Val) Val
 
+// Returns a parser that outputs the given value and consumes no text.
 func (p Parser) Wrap(v Val) Parser {
 	return func(vv Val) Val {
 		return List{v, vv}

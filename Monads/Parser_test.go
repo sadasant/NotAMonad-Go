@@ -6,6 +6,14 @@ import (
 	"testing"
 )
 
+func Test_Parser_Wrap(t *testing.T) {
+	list := new(Parser).Wrap("test")(nil)
+	expected := List{"test", nil}
+	if reflect.DeepEqual(list, expected) != true {
+		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, list)
+	}
+}
+
 func Test_Parser_Transform(t *testing.T) {
 	p := Parser(func(v Val) Val {
 		s := v.(string)
