@@ -6,27 +6,23 @@ import (
 	"testing"
 )
 
-func Test_Printer_Wrap(t *testing.T) {
+func Example_Printer_Wrap() {
 	s := new(Printer).Wrap("test")
-	expected := "test"
-	if received := s("input"); received != expected {
-		t.Errorf("Printer\nexpeted:%s\nreceived:%s", expected, received)
-	}
-	if received := s("test"); received != expected {
-		t.Errorf("Printer\nexpeted:%s\nreceived:%s", expected, received)
-	}
-	if received := s("a"); received != expected {
-		t.Errorf("Printer\nexpeted:%s\nreceived:%s", expected, received)
-	}
+    s("input")
+    s("test")
+    s("a")
+	// Output:
+	// test
+	// test
+	// test
 }
 
 func Test_Printer_Transform(t *testing.T) {
 	var r []int
 	var p Printer
-	p = func(m Val) Val {
+	p = func(m Val) {
 		i, _ := strconv.Atoi(m.(string))
 		r = append(r, i)
-		return m
 	}
 	q := p.Transform(func(m Val) Val {
 		return strconv.Itoa(m.(int))
@@ -44,21 +40,20 @@ func Test_Printer_Transform(t *testing.T) {
 }
 
 func Test_Printer_Flatten(t *testing.T) {
-	var r []int
+	var r []Val
 	var p Printer
-	p = func(m Val) Val {
-		r = append(r, m.(Printer)("").(int))
-		return m
+	p = func(m Val) {
+		r = append(r, m)
 	}
 	q := p.Flatten()
- 	q(5)
-	expected := []int{5}
-	if reflect.DeepEqual(r, expected) != true {
-		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, r)
+	// AWKWARD: can't really verify what the printers are, just that they
+	// were made and inserted
+	q(5)
+	if len(r) != 1 {
+		t.Errorf("len(r)\nexpeted:%s\nreceived:%s", 1, len(r))
 	}
 	q(8)
-	expected = []int{5, 8}
-	if reflect.DeepEqual(r, expected) != true {
-		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, r)
+	if len(r) != 2 {
+		t.Errorf("len(r)\nexpeted:%s\nreceived:%s", 2, len(r))
 	}
 }
