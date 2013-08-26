@@ -5,12 +5,10 @@ import (
 	"math/cmplx"
 )
 
-type Superposition map[string]interface{}
-
-type QuantumSuperposition func() Superposition
+type QuantumSuperposition map[string]interface{}
 
 // well-formed superpositions must add up to 100%:
-func (p Superposition) IsOk() error {
+func (p QuantumSuperposition) IsOk() error {
 	var sum float64
 	for _, v := range p {
 		if _v, ok := v.([]interface{}); ok {
@@ -28,9 +26,7 @@ func (p Superposition) IsOk() error {
 // Returns a superposition where the given value is the single state and
 // has an amplitude of 1.
 func (q QuantumSuperposition) Wrap(k string) QuantumSuperposition {
-	return func() Superposition {
-		return Superposition{k: complex(1.0, 0)}
-	}
+	return QuantumSuperposition{k: complex(1.0, 0)}
 }
 
 // Returns a superposition over the result of drawing an input from the
@@ -40,21 +36,20 @@ func (q QuantumSuperposition) Wrap(k string) QuantumSuperposition {
 // BROKEN - When distinct inputs are merged, they interfere.
 // The interference breaks the squared magnitude constraint.
 func (q QuantumSuperposition) Transform(t func(string) string) QuantumSuperposition {
-	qs := q()
-	rs := Superposition{}
-	for k, v := range qs {
+	r := QuantumSuperposition{}
+	for k, v := range q {
 		trans := t(k)
-		if _, ok := rs[trans]; ok {
-			rs[trans] = rs[trans].(complex128) + v.(complex128)
+		if _, ok := r[trans]; ok {
+			r[trans] = r[trans].(complex128) + v.(complex128)
 		} else {
 			if _v, ok := v.([]interface{}); ok {
-				rs[trans] = _v[1]
+				r[trans] = _v[1]
 			} else {
-				rs[trans] = v
+				r[trans] = v
 			}
 		}
 	}
-	return func() Superposition { return rs }
+	return r
 }
 
 // Returns a superposition over the result of drawing an intermediate
@@ -69,18 +64,17 @@ func (q QuantumSuperposition) Transform(t func(string) string) QuantumSuperposit
 // In go1.1.2 linux/arm it breaks with: reg R13 left allocated
 // The issue was reported here: https://code.google.com/p/go/issues/detail?can=2&start=0&num=100&q=&colspec=ID%20Status%20Stars%20Priority%20Owner%20Reporter%20Summary&groupby=&sort=&id=6247
 func (q QuantumSuperposition) Flatten() QuantumSuperposition {
-	qs := q()
-	rs := Superposition{}
-	for _, l := range qs {
+	r := QuantumSuperposition{}
+	for _, l := range q {
 		if _l, ok := l.([]interface{}); ok {
-			for k, v := range _l[0].(QuantumSuperposition)() {
-				if _, ok := rs[k]; ok {
-					rs[k] = rs[k].(complex128) + mult(v.(complex128), _l[1].(complex128))
+			for k, v := range _l[0].(QuantumSuperposition) {
+				if _, ok := r[k]; ok {
+					r[k] = r[k].(complex128) + mult(v.(complex128), _l[1].(complex128))
 				} else {
 					if _v, ok := v.([]interface{}); ok {
-						rs[k] = mult(_v[1].(complex128), _l[1].(complex128))
+						r[k] = mult(_v[1].(complex128), _l[1].(complex128))
 					} else {
-						rs[k] = mult(v.(complex128), _l[1].(complex128))
+						r[k] = mult(v.(complex128), _l[1].(complex128))
 					}
 				}
 			}
@@ -88,7 +82,7 @@ func (q QuantumSuperposition) Flatten() QuantumSuperposition {
 			return q
 		}
 	}
-	return func() Superposition { return rs }
+	return r
 }
 
 // As appears here: http://www.clarku.edu/~djoyce/complex/mult.html
