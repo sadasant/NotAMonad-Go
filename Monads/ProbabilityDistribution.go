@@ -4,13 +4,10 @@ import (
 	"errors"
 )
 
-type Distribution map[string]interface{}
-
-// ProbabilityDistribution instead of ProbabilityDistribution
-type ProbabilityDistribution func() Distribution
+type ProbabilityDistribution map[string]interface{}
 
 // well-formed distributions must add up to 100%:
-func (d Distribution) IsOk() error {
+func (d ProbabilityDistribution) IsOk() error {
 	var sum float64
 	for _, v := range d {
 		if _v, ok := v.([]interface{}); ok {
@@ -28,9 +25,7 @@ func (d Distribution) IsOk() error {
 // Returns a probability distribution where the given value is the single
 // 100% likely possibility.
 func (p ProbabilityDistribution) Wrap(k string) ProbabilityDistribution {
-	return func() Distribution {
-		return Distribution{k: 1.0}
-	}
+	return ProbabilityDistribution{k: 1.0}
 }
 
 // Returns a probability distribution over the result of drawing an input
@@ -39,21 +34,20 @@ func (p ProbabilityDistribution) Wrap(k string) ProbabilityDistribution {
 // transformation, the probability of the output is the sum of the
 // inputs' probabilities.
 func (p ProbabilityDistribution) Transform(t func(string) string) ProbabilityDistribution {
-	pd := p()
-	rd := Distribution{}
-	for k, v := range pd {
+	r := ProbabilityDistribution{}
+	for k, v := range p {
 		trans := t(k)
-		if _, ok := rd[trans]; ok {
-			rd[trans] = rd[trans].(float64) + v.(float64)
+		if _, ok := r[trans]; ok {
+			r[trans] = r[trans].(float64) + v.(float64)
 		} else {
 			if _v, ok := v.([]interface{}); ok {
-				rd[trans] = _v[1]
+				r[trans] = _v[1]
 			} else {
-				rd[trans] = v
+				r[trans] = v
 			}
 		}
 	}
-	return func() Distribution { return rd }
+	return r
 }
 
 // Returns a probability distribution over the result of drawing an
@@ -65,18 +59,17 @@ func (p ProbabilityDistribution) Transform(t func(string) string) ProbabilityDis
 // probability of its distribution.  When an item appears in multiple
 // intermediate distributions, the corresponding probabilities are added.
 func (p ProbabilityDistribution) Flatten() ProbabilityDistribution {
-	pd := p()
-	rd := Distribution{}
-	for _, l := range pd {
+	r := ProbabilityDistribution{}
+	for _, l := range p {
 		if _l, ok := l.([]interface{}); ok {
-			for k, v := range _l[0].(ProbabilityDistribution)() {
-				if _, ok := rd[k]; ok {
-					rd[k] = rd[k].(float64) + (v.(float64) * _l[1].(float64))
+			for k, v := range _l[0].(ProbabilityDistribution) {
+				if _, ok := r[k]; ok {
+					r[k] = r[k].(float64) + (v.(float64) * _l[1].(float64))
 				} else {
 					if _v, ok := v.([]interface{}); ok {
-						rd[k] = _v[1].(float64) * _l[1].(float64)
+						r[k] = _v[1].(float64) * _l[1].(float64)
 					} else {
-						rd[k] = v.(float64) * _l[1].(float64)
+						r[k] = v.(float64) * _l[1].(float64)
 					}
 				}
 			}
@@ -84,5 +77,5 @@ func (p ProbabilityDistribution) Flatten() ProbabilityDistribution {
 			return p
 		}
 	}
-	return func() Distribution { return rd }
+	return r
 }
