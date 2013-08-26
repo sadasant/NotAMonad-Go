@@ -9,14 +9,8 @@ type Distribution map[string]interface{}
 // PD instead of ProbabilityDistribution
 type PD func() Distribution
 
-func (p PD) From(dict Distribution) (PD, error) {
-	return func() Distribution {
-		return dict
-	}, dict.isWellFormed()
-}
-
 // well-formed distributions must add up to 100%:
-func (d Distribution) isWellFormed() error {
+func (d Distribution) IsOk() error {
 	var sum float64
 	for _, v := range d {
 		if _v, ok := v.([]interface{}); ok {
@@ -34,8 +28,9 @@ func (d Distribution) isWellFormed() error {
 // Returns a probability distribution where the given value is the single
 // 100% likely possibility.
 func (p PD) Wrap(k string) PD {
-	p, _ = p.From(Distribution{k: 1.0})
-	return p
+	return func() Distribution {
+		return Distribution{k: 1.0}
+	}
 }
 
 // Returns a probability distribution over the result of drawing an input
@@ -43,7 +38,7 @@ func (p PD) Wrap(k string) PD {
 // When two distinct inputs are merged into the same output by the
 // transformation, the probability of the output is the sum of the
 // inputs' probabilities.
-func (p PD) Transform(t func(string) string) (PD, error) {
+func (p PD) Transform(t func(string) string) PD {
 	pd := p()
 	rd := Distribution{}
 	for k, v := range pd {
@@ -58,7 +53,7 @@ func (p PD) Transform(t func(string) string) (PD, error) {
 			}
 		}
 	}
-	return p.From(rd)
+	return func() Distribution { return rd }
 }
 
 // Returns a probability distribution over the result of drawing an
@@ -69,7 +64,7 @@ func (p PD) Transform(t func(string) string) (PD, error) {
 // The output probability of an item is its probability times the
 // probability of its distribution.  When an item appears in multiple
 // intermediate distributions, the corresponding probabilities are added.
-func (p PD) Flatten() (PD, error) {
+func (p PD) Flatten() PD {
 	pd := p()
 	rd := Distribution{}
 	for _, l := range pd {
@@ -86,8 +81,8 @@ func (p PD) Flatten() (PD, error) {
 				}
 			}
 		} else {
-			return p, nil
+			return p
 		}
 	}
-	return p.From(rd)
+	return func() Distribution { return rd }
 }
