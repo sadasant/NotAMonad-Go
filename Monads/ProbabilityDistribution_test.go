@@ -53,8 +53,8 @@ func Test_PD_Flatten(t *testing.T) {
 		"bra": 1.0 / 3 * 2,
 	})
 	s2, _ := pd.From(Distribution{
-		"a1": List{a1, 1.0 / 5},
-		"a2": List{a2, 1.0 / 5 * 4},
+		"a1": []interface{}{a1, 1.0 / 5},
+		"a2": []interface{}{a2, 1.0 / 5 * 4},
 	})
 	s2, _ = s2.Flatten()
 	expected = Distribution{

@@ -7,7 +7,7 @@ type Parser func(interface{}) interface{}
 // Returns a parser that outputs the given value and consumes no text.
 func (p Parser) Wrap(v interface{}) Parser {
 	return func(vv interface{}) interface{} {
-		return List{v, vv}
+		return []interface{}{v, vv}
 	}
 }
 
@@ -15,9 +15,9 @@ func (p Parser) Wrap(v interface{}) Parser {
 // resulting value with the given transformation.
 func (p Parser) Transform(t Parser) Parser {
 	return func(v interface{}) interface{} {
-		mid := p(v).(List)
+		mid := p(v).([]interface{})
 		res := t(mid[0])
-		return List{res, mid[1]}
+		return []interface{}{res, mid[1]}
 	}
 }
 
@@ -27,7 +27,7 @@ func (p Parser) Transform(t Parser) Parser {
 // text.
 func (p Parser) Flatten() Parser {
 	return func(v interface{}) interface{} {
-		mid := p(v).(List)
+		mid := p(v).([]interface{})
 		q := mid[0].(Parser)
 		return q(mid[1])
 	}

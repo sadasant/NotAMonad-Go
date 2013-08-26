@@ -19,7 +19,7 @@ func (p PD) From(dict Distribution) (PD, error) {
 func (d Distribution) isWellFormed() error {
 	var sum float64
 	for _, v := range d {
-		if _v, ok := v.(List); ok {
+		if _v, ok := v.([]interface{}); ok {
 			sum += _v[1].(float64)
 		} else {
 			sum += v.(float64)
@@ -51,7 +51,7 @@ func (p PD) Transform(t func(string) string) (PD, error) {
 		if _, ok := rd[trans]; ok {
 			rd[trans] = rd[trans].(float64) + v.(float64)
 		} else {
-			if _v, ok := v.(List); ok {
+			if _v, ok := v.([]interface{}); ok {
 				rd[trans] = _v[1]
 			} else {
 				rd[trans] = v
@@ -73,12 +73,12 @@ func (p PD) Flatten() (PD, error) {
 	pd := p()
 	rd := Distribution{}
 	for _, l := range pd {
-		if _l, ok := l.(List); ok {
+		if _l, ok := l.([]interface{}); ok {
 			for k, v := range _l[0].(PD)() {
 				if _, ok := rd[k]; ok {
 					rd[k] = rd[k].(float64) + (v.(float64) * _l[1].(float64))
 				} else {
-					if _v, ok := v.(List); ok {
+					if _v, ok := v.([]interface{}); ok {
 						rd[k] = _v[1].(float64) * _l[1].(float64)
 					} else {
 						rd[k] = v.(float64) * _l[1].(float64)
