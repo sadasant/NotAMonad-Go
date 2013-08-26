@@ -6,8 +6,8 @@ import (
 
 type Distribution map[string]interface{}
 
-// PD instead of ProbabilityDistribution
-type PD func() Distribution
+// ProbabilityDistribution instead of ProbabilityDistribution
+type ProbabilityDistribution func() Distribution
 
 // well-formed distributions must add up to 100%:
 func (d Distribution) IsOk() error {
@@ -20,14 +20,14 @@ func (d Distribution) IsOk() error {
 		}
 	}
 	if sum != 1 {
-		return errors.New("The PD is not Well Formed")
+		return errors.New("The ProbabilityDistribution is not Well Formed")
 	}
 	return nil
 }
 
 // Returns a probability distribution where the given value is the single
 // 100% likely possibility.
-func (p PD) Wrap(k string) PD {
+func (p ProbabilityDistribution) Wrap(k string) ProbabilityDistribution {
 	return func() Distribution {
 		return Distribution{k: 1.0}
 	}
@@ -38,7 +38,7 @@ func (p PD) Wrap(k string) PD {
 // When two distinct inputs are merged into the same output by the
 // transformation, the probability of the output is the sum of the
 // inputs' probabilities.
-func (p PD) Transform(t func(string) string) PD {
+func (p ProbabilityDistribution) Transform(t func(string) string) ProbabilityDistribution {
 	pd := p()
 	rd := Distribution{}
 	for k, v := range pd {
@@ -64,12 +64,12 @@ func (p PD) Transform(t func(string) string) PD {
 // The output probability of an item is its probability times the
 // probability of its distribution.  When an item appears in multiple
 // intermediate distributions, the corresponding probabilities are added.
-func (p PD) Flatten() PD {
+func (p ProbabilityDistribution) Flatten() ProbabilityDistribution {
 	pd := p()
 	rd := Distribution{}
 	for _, l := range pd {
 		if _l, ok := l.([]interface{}); ok {
-			for k, v := range _l[0].(PD)() {
+			for k, v := range _l[0].(ProbabilityDistribution)() {
 				if _, ok := rd[k]; ok {
 					rd[k] = rd[k].(float64) + (v.(float64) * _l[1].(float64))
 				} else {

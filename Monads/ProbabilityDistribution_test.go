@@ -6,16 +6,16 @@ import (
 	"testing"
 )
 
-func Test_PD_Wrap(t *testing.T) {
-	p := new(PD).Wrap("test")
+func Test_ProbabilityDistribution_Wrap(t *testing.T) {
+	p := new(ProbabilityDistribution).Wrap("test")
 	expected := Distribution{"test": 1.0}
 	if reflect.DeepEqual(p(), expected) != true {
 		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, p())
 	}
 }
 
-func Test_PD_Transform(t *testing.T) {
-	p := PD(func() Distribution {
+func Test_ProbabilityDistribution_Transform(t *testing.T) {
+	p := ProbabilityDistribution(func() Distribution {
 		return Distribution{
 			"hey":    1.0 / 2,
 			"listen": 1.0 / 4,
@@ -24,7 +24,7 @@ func Test_PD_Transform(t *testing.T) {
 	})
 	err := p().IsOk()
 	if err != nil {
-		t.Errorf("PD %s caused: %s", p(), err)
+		t.Errorf("ProbabilityDistribution %s caused: %s", p(), err)
 	}
 	q := p.Transform(func(k string) string {
 		return strconv.Itoa(len(k))
@@ -38,27 +38,27 @@ func Test_PD_Transform(t *testing.T) {
 	}
 }
 
-func Test_PD_Flatten(t *testing.T) {
-	p := new(PD).Wrap("test").Flatten()
+func Test_ProbabilityDistribution_Flatten(t *testing.T) {
+	p := new(ProbabilityDistribution).Wrap("test").Flatten()
 	expected := Distribution{"test": 1.0}
 	if reflect.DeepEqual(p(), expected) != true {
 		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, p())
 	}
 
-	a1 := PD(func() Distribution {
+	a1 := ProbabilityDistribution(func() Distribution {
 		return Distribution{
 			"a":   1.0 / 7,
 			"bra": 1.0 / 7 * 2,
 			"ca":  1.0 / 7 * 4,
 		}
 	})
-	a2 := PD(func() Distribution {
+	a2 := ProbabilityDistribution(func() Distribution {
 		return Distribution{
 			"da":  1.0 / 3,
 			"bra": 1.0 / 3 * 2,
 		}
 	})
-	s2 := PD(func() Distribution {
+	s2 := ProbabilityDistribution(func() Distribution {
 		return Distribution{
 			"a1": []interface{}{a1, 1.0 / 5},
 			"a2": []interface{}{a2, 1.0 / 5 * 4},
