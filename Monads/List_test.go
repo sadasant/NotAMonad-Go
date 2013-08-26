@@ -14,8 +14,7 @@ func Test_List_Wrap(t *testing.T) {
 }
 
 func Test_List_Transform(t *testing.T) {
-	list := List{1, 2, 3}
-	list = list.Transform(func(v interface{}) interface{} {
+	list := List{1, 2, 3}.Transform(func(v interface{}) interface{} {
 		i := v.(int)
 		return i * i
 	})
@@ -32,8 +31,7 @@ func Test_List_Flatten(t *testing.T) {
 		[]int{1},
 		List{0},
 		[]string{"banana"},
-	}
-	list = list.Flatten()
+	}.Flatten()
 	expected := List{2, 3, 5, 7, 1, 0, "banana"}
 	if reflect.DeepEqual(list, expected) != true {
 		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, list)
