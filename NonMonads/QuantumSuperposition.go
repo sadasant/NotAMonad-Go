@@ -5,7 +5,7 @@ import (
 	"math/cmplx"
 )
 
-type Superposition map[string]Val
+type Superposition map[string]interface{}
 
 type QuantumSuperposition struct {
 	Dict Superposition
@@ -19,7 +19,7 @@ func (p *QuantumSuperposition) Wrap(k string) QuantumSuperposition {
 	return *p
 }
 
-func (p *QuantumSuperposition) From(dict map[string]Val) (QuantumSuperposition, error) {
+func (p *QuantumSuperposition) From(dict map[string]interface{}) (QuantumSuperposition, error) {
 	p.Dict = dict
 	return *p, p.isWellFormed()
 }
@@ -28,7 +28,7 @@ func (p *QuantumSuperposition) From(dict map[string]Val) (QuantumSuperposition, 
 func (p QuantumSuperposition) isWellFormed() error {
 	var sum float64
 	for _, v := range p.Dict {
-		if _v, ok := v.([]Val); ok {
+		if _v, ok := v.([]interface{}); ok {
 			sum += cmplx.Abs(_v[1].(complex128))
 		} else {
 			sum += cmplx.Abs(v.(complex128))
@@ -53,7 +53,7 @@ func (p QuantumSuperposition) Transform(t func(string) string) (QuantumSuperposi
 		if _, ok := dict[trans]; ok {
 			dict[trans] = dict[trans].(complex128) + v.(complex128)
 		} else {
-			if _v, ok := v.([]Val); ok {
+			if _v, ok := v.([]interface{}); ok {
 				dict[trans] = _v[1]
 			} else {
 				dict[trans] = v
@@ -77,12 +77,12 @@ func (p QuantumSuperposition) Transform(t func(string) string) (QuantumSuperposi
 func (p QuantumSuperposition) Flatten() (QuantumSuperposition, error) {
 	dict := Superposition{}
 	for _, l := range p.Dict {
-		if _l, ok := l.([]Val); ok {
+		if _l, ok := l.([]interface{}); ok {
 			for k, v := range _l[0].(QuantumSuperposition).Dict {
 				if _, ok := dict[k]; ok {
 					dict[k] = dict[k].(complex128) + mult(v.(complex128), _l[1].(complex128))
 				} else {
-					if _v, ok := v.([]Val); ok {
+					if _v, ok := v.([]interface{}); ok {
 						dict[k] = mult(_v[1].(complex128), _l[1].(complex128))
 					} else {
 						dict[k] = mult(v.(complex128), _l[1].(complex128))

@@ -17,12 +17,12 @@ func Test_SquareMatrix_Wrap(t *testing.T) {
 
 func Test_SquareMatrix_Transform(t *testing.T) {
 	var s, expected SquareMatrix
-	s.From(Square{[]Val{3, 7}, []Val{2, 5}})
-	s, _ = s.Transform(func(v Val) Val {
+	s.From(Square{[]interface{}{3, 7}, []interface{}{2, 5}})
+	s, _ = s.Transform(func(v interface{}) interface{} {
 		i := v.(int)
 		return i * i
 	})
-	expected.From(Square{[]Val{9, 49}, []Val{4, 25}})
+	expected.From(Square{[]interface{}{9, 49}, []interface{}{4, 25}})
 	if reflect.DeepEqual(s, expected) != true {
 		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, s)
 	}
@@ -42,30 +42,30 @@ func Test_SquareMatrix_Flatten(t *testing.T) {
 	if len(s2.Items) != 0 {
 		t.Errorf("len(s2)expeted:%s\nreceived:%s", 1, len(s2.Items))
 	}
-	r3.From(Square{[]Val{}, []Val{}})
+	r3.From(Square{[]interface{}{}, []interface{}{}})
 	r3.Items[0] = append(r3.Items[0], SquareMatrix{})
 	s3, _ = r3.Flatten()
 	if len(s3.Items) != 0 {
 		t.Errorf("len(s2)expeted:%s\nreceived:%s", 0, len(s3.Items))
 	}
-	r4.From(Square{[]Val{3, 7}, []Val{2, 5}})
-	s4, _ = r4.Transform(func(v Val) Val {
+	r4.From(Square{[]interface{}{3, 7}, []interface{}{2, 5}})
+	s4, _ = r4.Transform(func(v interface{}) interface{} {
 		return new(SquareMatrix).Wrap(v)
 	})
 	s4, _ = s4.Flatten()
-	expected.From(Square{[]Val{3, 7}, []Val{2, 5}})
+	expected.From(Square{[]interface{}{3, 7}, []interface{}{2, 5}})
 	if reflect.DeepEqual(s4.Items, expected.Items) != true {
 		t.Errorf("DeepEqual\nexpeted: %s\nreceived:%s", expected.Items, s4.Items)
 	}
-	s5, _ = r4.Transform(func(v Val) Val {
+	s5, _ = r4.Transform(func(v interface{}) interface{} {
 		return s4
 	})
 	s5, _ = s5.Flatten()
 	expected.From(Square{
-		[]Val{3, 7, 3, 7},
-		[]Val{2, 5, 2, 5},
-		[]Val{3, 7, 3, 7},
-		[]Val{2, 5, 2, 5},
+		[]interface{}{3, 7, 3, 7},
+		[]interface{}{2, 5, 2, 5},
+		[]interface{}{3, 7, 3, 7},
+		[]interface{}{2, 5, 2, 5},
 	})
 	if reflect.DeepEqual(s5.Items, expected.Items) != true {
 		t.Errorf("DeepEqual\nexpeted: %s\nreceived:%s", expected.Items, s5.Items)
@@ -76,11 +76,11 @@ func Test_SquareMatrix_Flatten_Broken(t *testing.T) {
 	var r, bad SquareMatrix
 	bad.From(Square{})
 	r.From(Square{
-		[]Val{
+		[]interface{}{
 			new(SquareMatrix).Wrap(1),
 			bad,
 		},
-		[]Val{
+		[]interface{}{
 			new(SquareMatrix).Wrap(1),
 			new(SquareMatrix).Wrap(1),
 		},

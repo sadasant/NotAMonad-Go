@@ -20,11 +20,11 @@ func Example_Printer_Wrap() {
 func Test_Printer_Transform(t *testing.T) {
 	var r []int
 	var p Printer
-	p = func(m Val) {
+	p = func(m interface{}) {
 		i, _ := strconv.Atoi(m.(string))
 		r = append(r, i)
 	}
-	q := p.Transform(func(m Val) Val {
+	q := p.Transform(func(m interface{}) interface{} {
 		return strconv.Itoa(m.(int))
 	})
 	q(5)
@@ -40,9 +40,9 @@ func Test_Printer_Transform(t *testing.T) {
 }
 
 func Test_Printer_Flatten(t *testing.T) {
-	var r []Val
+	var r []interface{}
 	var p Printer
-	p = func(m Val) {
+	p = func(m interface{}) {
 		r = append(r, m)
 	}
 	q := p.Flatten()

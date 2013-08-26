@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-type Distribution map[string]Val
+type Distribution map[string]interface{}
 
 type ProbabilityDistribution struct {
 	Dict Distribution
@@ -17,7 +17,7 @@ func (p *ProbabilityDistribution) Wrap(k string) ProbabilityDistribution{
 	return *p
 }
 
-func (p *ProbabilityDistribution) From(dict map[string]Val) error {
+func (p *ProbabilityDistribution) From(dict map[string]interface{}) error {
 	p.Dict = dict
 	return p.isWellFormed()
 }
@@ -44,7 +44,7 @@ func (p ProbabilityDistribution) isWellFormed() error {
 // transformation, the probability of the output is the sum of the
 // inputs' probabilities.
 func (p ProbabilityDistribution) Transform(t func(string) string) (r ProbabilityDistribution) {
-	r.Dict = map[string]Val{}
+	r.Dict = map[string]interface{}{}
 	for k, v := range p.Dict {
 		trans := t(k)
 		if _, ok := r.Dict[trans]; ok {
@@ -69,7 +69,7 @@ func (p ProbabilityDistribution) Transform(t func(string) string) (r Probability
 // probability of its distribution.  When an item appears in multiple
 // intermediate distributions, the corresponding probabilities are added.
 func (p ProbabilityDistribution) Flatten() (r ProbabilityDistribution) {
-	r.Dict = map[string]Val{}
+	r.Dict = map[string]interface{}{}
 	for _, l := range p.Dict {
 		if _l, ok := l.(List); ok {
 			for k, v := range _l[0].(ProbabilityDistribution).Dict {

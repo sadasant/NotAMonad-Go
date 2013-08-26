@@ -55,8 +55,8 @@ func Test_QuantumSuperposition_Flatten(t *testing.T) {
 		"there": complex(-1.0/5*4, 0),
 	})
 	s2, _ := new(QuantumSuperposition).From(Superposition{
-		"a1": []Val{a1, complex(1.0/5*3, 0)},
-		"a2": []Val{a2, complex(0, 1.0/5*4)},
+		"a1": []interface{}{a1, complex(1.0/5*3, 0)},
+		"a2": []interface{}{a2, complex(0, 1.0/5*4)},
 	})
 	s2, _ = s2.Flatten()
 	expected := Superposition{
@@ -82,8 +82,8 @@ func Test_QuantumSuperposition_Flatten_Broken(t *testing.T) {
 		"hey": complex(-1.0, 0),
 	})
 	s2, _ := new(QuantumSuperposition).From(Superposition{
-		"a1": []Val{a1, complex(1.0/5*3, 0)},
-		"a2": []Val{a2, complex(1.0/5*4, 0)},
+		"a1": []interface{}{a1, complex(1.0/5*3, 0)},
+		"a2": []interface{}{a2, complex(1.0/5*4, 0)},
 	})
 	s2, err := s2.Flatten()
 	if err == nil {

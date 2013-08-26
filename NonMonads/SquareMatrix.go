@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-type Square [][]Val
+type Square [][]interface{}
 type SquareMatrix struct {
 	Items Square
 }
@@ -23,14 +23,14 @@ func (s SquareMatrix) isWellFormed() error {
 }
 
 // Returns a square matrix containing a single value: the given value.
-func (s SquareMatrix) Wrap(v Val) (r SquareMatrix) {
-	r.Items = Square{[]Val{v}}
+func (s SquareMatrix) Wrap(v interface{}) (r SquareMatrix) {
+	r.Items = Square{[]interface{}{v}}
 	return
 }
 
 // Returns a square matrix created by running all of the items in the
 // given square matrix through a transformation function.
-func (s SquareMatrix) Transform(t func(Val) Val) (SquareMatrix, error) {
+func (s SquareMatrix) Transform(t func(interface{}) interface{}) (SquareMatrix, error) {
 	items := make(Square, len(s.Items[0]))
 	for i := 0; i < len(s.Items); i++ {
 		for j := 0; j < len(s.Items[i]); j++ {
@@ -66,11 +66,11 @@ func (s SquareMatrix) Flatten() (SquareMatrix, error) {
 					for s0j := 0; s0j < len(s0.Items[s0i]); s0j++ {
 						i := si*innerSpan + s0i
 						if len(r) <= i {
-							r = append(r, []Val{})
+							r = append(r, []interface{}{})
 						}
 						j := sj*innerSpan + s0j
 						if len(r[i]) <= j {
-							r[i] = append(r[i], []Val{})
+							r[i] = append(r[i], []interface{}{})
 						}
 						r[i][j] = s0.Items[s0i][s0j]
 					}

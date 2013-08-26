@@ -15,11 +15,11 @@ func Test_Parser_Wrap(t *testing.T) {
 }
 
 func Test_Parser_Transform(t *testing.T) {
-	p := Parser(func(v Val) Val {
+	p := Parser(func(v interface{}) interface{} {
 		s := v.(string)
 		return List{s[0:5], s[5:]}
 	})
-	q := p.Transform(func(v Val) Val {
+	q := p.Transform(func(v interface{}) interface{} {
 		i, _ := strconv.Atoi(v.(string))
 		return i * i
 	})
@@ -31,12 +31,12 @@ func Test_Parser_Transform(t *testing.T) {
 }
 
 func Test_Parser_Flatten(t *testing.T) {
-	psubs := Parser(func(v Val) Val {
+	psubs := Parser(func(v interface{}) interface{} {
 		s := v.(string)
 		i, _ := strconv.Atoi(s[0:5])
 		return List{i, s[5:]}
 	})
-	p := Parser(func(v Val) Val {
+	p := Parser(func(v interface{}) interface{} {
 		s := v.(string)
 		if s[0] == 'a' {
 			return List{psubs, s[1:]}
