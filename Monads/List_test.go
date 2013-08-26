@@ -6,7 +6,7 @@ import (
 )
 
 func Test_List_Wrap(t *testing.T) {
-	list := new (List).Wrap("test")
+	list := new(List).Wrap("test")
 	expected := List{"test"}
 	if reflect.DeepEqual(list, expected) != true {
 		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, list)

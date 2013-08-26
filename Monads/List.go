@@ -4,7 +4,7 @@ type List []interface{}
 
 // Returns a list containing a single value: the given value.
 func (l *List) Wrap(v interface{}) List {
-    return append(*l, v)
+	return append(*l, v)
 }
 
 // Returns a list created by running all of the items in the given list

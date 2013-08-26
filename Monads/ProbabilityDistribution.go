@@ -12,7 +12,7 @@ type ProbabilityDistribution struct {
 
 // Returns a probability distribution where the given value is the single
 // 100% likely possibility.
-func (p *ProbabilityDistribution) Wrap(k string) ProbabilityDistribution{
+func (p *ProbabilityDistribution) Wrap(k string) ProbabilityDistribution {
 	p.Dict = Distribution{k: 1.0}
 	return *p
 }

@@ -8,9 +8,9 @@ import (
 
 func Example_Printer_Wrap() {
 	s := new(Printer).Wrap("test")
-    s("input")
-    s("test")
-    s("a")
+	s("input")
+	s("test")
+	s("a")
 	// Output:
 	// test
 	// test

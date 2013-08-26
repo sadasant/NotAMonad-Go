@@ -7,7 +7,7 @@ import (
 )
 
 func Test_ProbabilityDistribution_Wrap(t *testing.T) {
-	p := new (ProbabilityDistribution).Wrap("test")
+	p := new(ProbabilityDistribution).Wrap("test")
 	expected := Distribution{"test": 1.0}
 	if reflect.DeepEqual(p.Dict, expected) != true {
 		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, p.Dict)
@@ -37,7 +37,7 @@ func Test_ProbabilityDistribution_Transform(t *testing.T) {
 }
 
 func Test_ProbabilityDistribution_Flatten(t *testing.T) {
-	p := new (ProbabilityDistribution).Wrap("test").Flatten()
+	p := new(ProbabilityDistribution).Wrap("test").Flatten()
 	expected := Distribution{"test": 1.0}
 	if reflect.DeepEqual(p.Dict, expected) != true {
 		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, p.Dict)
