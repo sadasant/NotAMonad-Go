@@ -7,7 +7,7 @@ import (
 
 type Superposition map[string]interface{}
 
-type QS func() Superposition
+type QuantumSuperposition func() Superposition
 
 // well-formed superpositions must add up to 100%:
 func (p Superposition) IsOk() error {
@@ -20,14 +20,14 @@ func (p Superposition) IsOk() error {
 		}
 	}
 	if sum != 1 {
-		return errors.New("The QS is not Well Formed")
+		return errors.New("The QuantumSuperposition is not Well Formed")
 	}
 	return nil
 }
 
 // Returns a superposition where the given value is the single state and
 // has an amplitude of 1.
-func (q QS) Wrap(k string) QS {
+func (q QuantumSuperposition) Wrap(k string) QuantumSuperposition {
 	return func() Superposition {
 		return Superposition{k: complex(1.0, 0)}
 	}
@@ -39,7 +39,7 @@ func (q QS) Wrap(k string) QS {
 //
 // BROKEN - When distinct inputs are merged, they interfere.
 // The interference breaks the squared magnitude constraint.
-func (q QS) Transform(t func(string) string) QS {
+func (q QuantumSuperposition) Transform(t func(string) string) QuantumSuperposition {
 	qs := q()
 	rs := Superposition{}
 	for k, v := range qs {
@@ -68,12 +68,12 @@ func (q QS) Transform(t func(string) string) QS {
 // If we don't use our custom mult function, it breaks
 // In go1.1.2 linux/arm it breaks with: reg R13 left allocated
 // The issue was reported here: https://code.google.com/p/go/issues/detail?can=2&start=0&num=100&q=&colspec=ID%20Status%20Stars%20Priority%20Owner%20Reporter%20Summary&groupby=&sort=&id=6247
-func (q QS) Flatten() QS {
+func (q QuantumSuperposition) Flatten() QuantumSuperposition {
 	qs := q()
 	rs := Superposition{}
 	for _, l := range qs {
 		if _l, ok := l.([]interface{}); ok {
-			for k, v := range _l[0].(QS)() {
+			for k, v := range _l[0].(QuantumSuperposition)() {
 				if _, ok := rs[k]; ok {
 					rs[k] = rs[k].(complex128) + mult(v.(complex128), _l[1].(complex128))
 				} else {

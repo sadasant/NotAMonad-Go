@@ -7,16 +7,16 @@ import (
 	"testing"
 )
 
-func Test_QS_Wrap(t *testing.T) {
-	s := new(QS).Wrap("test")
+func Test_QuantumSuperposition_Wrap(t *testing.T) {
+	s := new(QuantumSuperposition).Wrap("test")
 	expected := Superposition{"test": complex(1.0, 0)}
 	if reflect.DeepEqual(s(), expected) != true {
 		t.Errorf("DeepEqual\nexpeted:%s\nreceived:%s", expected, s())
 	}
 }
 
-func Test_QS_Transform(t *testing.T) {
-	s := QS(func() Superposition {
+func Test_QuantumSuperposition_Transform(t *testing.T) {
+	s := QuantumSuperposition(func() Superposition {
 		return Superposition{
 			"hey": complex(1.0/5*3, 0),
 			"you": -complex(1.0/5*4, 0),
@@ -27,12 +27,12 @@ func Test_QS_Transform(t *testing.T) {
 	})
 	err := s().IsOk()
 	if err == nil {
-		t.Errorf("QS %s shouldn't be well construct", s())
+		t.Errorf("QuantumSuperposition %s shouldn't be well construct", s())
 	}
 }
 
-func Test_QS_Broken(t *testing.T) {
-	s := QS(func() Superposition {
+func Test_QuantumSuperposition_Broken(t *testing.T) {
+	s := QuantumSuperposition(func() Superposition {
 		return Superposition{
 			"hey":    complex(1.0/5*3, 0),
 			"listen": complex(1.0/5*4, 0),
@@ -50,20 +50,20 @@ func Test_QS_Broken(t *testing.T) {
 	}
 }
 
-func Test_QS_Flatten(t *testing.T) {
-	a1 := QS(func() Superposition {
+func Test_QuantumSuperposition_Flatten(t *testing.T) {
+	a1 := QuantumSuperposition(func() Superposition {
 		return Superposition{
 			"hey":    complex(1.0/5*3, 0),
 			"listen": complex(-1.0/5*4, 0),
 		}
 	})
-	a2 := QS(func() Superposition {
+	a2 := QuantumSuperposition(func() Superposition {
 		return Superposition{
 			"over":  complex(1.0/5*3, 0),
 			"there": complex(-1.0/5*4, 0),
 		}
 	})
-	s2 := QS(func() Superposition {
+	s2 := QuantumSuperposition(func() Superposition {
 		return Superposition{
 			"a1": []interface{}{a1, complex(1.0/5*3, 0)},
 			"a2": []interface{}{a2, complex(0, 1.0/5*4)},
@@ -85,14 +85,14 @@ func Test_QS_Flatten(t *testing.T) {
 	}
 }
 
-func Test_QS_Flatten_Broken(t *testing.T) {
-	a1 := QS(func() Superposition {
+func Test_QuantumSuperposition_Flatten_Broken(t *testing.T) {
+	a1 := QuantumSuperposition(func() Superposition {
 		return Superposition{"hey": complex(1.0, 0)}
 	})
-	a2 := QS(func() Superposition {
+	a2 := QuantumSuperposition(func() Superposition {
 		return Superposition{"hey": complex(-1.0, 0)}
 	})
-	s2 := QS(func() Superposition {
+	s2 := QuantumSuperposition(func() Superposition {
 		return Superposition{
 			"a1": []interface{}{a1, complex(1.0/5*3, 0)},
 			"a2": []interface{}{a2, complex(1.0/5*4, 0)},
@@ -101,6 +101,6 @@ func Test_QS_Flatten_Broken(t *testing.T) {
 	s2 = s2.Flatten()
 	err := s2().IsOk()
 	if err == nil {
-		t.Errorf("QS %s shouldn't be well construct", s2())
+		t.Errorf("QuantumSuperposition %s shouldn't be well construct", s2())
 	}
 }
